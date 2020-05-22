@@ -1,2 +1,91 @@
-<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<bootstrap4mix = 'http://www.jahia.org/bootstrap4/mix/1.0'>
 <jmix = 'http://www.jahia.org/jahia/mix/1.0'>
+<jnt = 'http://www.jahia.org/jahia/nt/1.0'>
+<mix = 'http://www.jcp.org/jcr/mix/1.0'>
+<timix = 'http://www.jahia.org/template/b4/industrial/mix/1.0'>
+<tint = 'http://www.jahia.org/template/b4/industrial/nt/1.0'>
+
+[timix:industrial] > jmix:droppableContent, jmix:editorialContent mixin
+
+//*** CONTENT LINKER //
+[timix:linkTo] mixin
+// - linkType (string, choicelist[industrialLinkTypeInitializer,resourceBundle]) = 'internalLink' autocreated indexed=no < 'internalLink', 'externalLink', 'self'
+ - linkType (string, choicelist[industrialLinkTypeInitializer,resourceBundle]) indexed=no < 'internalLink', 'externalLink', 'self'
+ - linkTarget (string, choicelist[resourceBundle]) = _blank autocreated indexed=no < '_blank', '_self', '_parent', '_top'
+[timix:internalLink] > jmix:templateMixin mixin
+ extends = timix:linkTo
+ - internalLink (weakreference, picker[type='editoriallink']) < 'jmix:droppableContent', 'jnt:page', 'jnt:file'
+
+[timix:externalLink] > jmix:templateMixin mixin
+ extends = timix:linkTo
+ - externalLink (string) = 'https://'
+// CONTENT LINKER ***//
+
+
+//*** TEXT //
+[tint:text]> jnt:content, timix:industrial
+ - text (string, richtext[ckeditor.customConfig='$context/modules/industrial/javascript/ckeditor/config/default.js']) internationalized
+// TEXT ***//
+
+
+//*** GALLERY IMAGE //
+[tint:galleryImage] > jnt:content, timix:industrial, bootstrap4mix:image, timix:linkTo, mix:title
+ - heading (string) internationalized
+ - iconClass (string)
+// GALLERY IMAGE ***//
+
+//*** CAROUSEL //
+[tint:owlcarouselItemS] > jnt:content, mix:title
+ - image (weakreference, picker[type='image']) mandatory < 'jmix:image'
+ - videoURL (string) internationalized
+ - caption (string, richtext[ckeditor.customConfig='$context/modules/industrial/javascript/ckeditor/config/default.js']) internationalized
+
+[tint:owlcarouselItemT] > jnt:content, mix:title
+ - avatar (weakreference, picker[type='image']) mandatory < 'jmix:image'
+ - heading (string, richtext[ckeditor.customConfig='$context/modules/industrial/javascript/ckeditor/config/small.js']) internationalized
+ - testimonial (string, richtext[ckeditor.customConfig='$context/modules/industrial/javascript/ckeditor/config/default.js']) internationalized
+
+[timix:owlcarouselAdvancedSettings] mixin
+ extends = tint:owlcarousel
+ itemtype = content
+ - options (string, textarea[height='360']) indexed=no
+ - class (string) indexed=no
+
+[tint:owlcarousel] > jnt:content, timix:industrial, jmix:list, jmix:siteContent orderable
+ - carouselType (string, choicelist[industrialCarouselItemTypeInitializer,resourceBundle]) mandatory indexed=no < 'standard', 'testimonial'
+
+[timix:owlCarouselT] mixin
+ extends = tint:owlcarousel
+ + * (tint:owlcarouselItemT)
+
+[timix:owlCarouselS] mixin
+ extends = tint:owlcarousel
+ + * (tint:owlcarouselItemS)
+//CAROUSEL ***//
+
+
+//*** CONTENT //
+//Note could use jnt:imageReferenceLink but prefere mine
+[tint:image] > jnt:content, timix:industrial
+ - image (weakreference, picker[type='image']) mandatory < 'jmix:image'
+
+[timix:content] mixin
+ - image (weakreference, picker[type='image']) mandatory < 'jmix:image'
+ - body (string, richtext[ckeditor.customConfig='$context/modules/industrial/javascript/ckeditor/config/small.js']) internationalized
+
+[tint:heading] > jnt:content, timix:content, timix:industrial
+
+//[tint:halfBlock] > jnt:content, timix:content, timix:industrial
+// - imagePosition (string, choicelist[resourceBundle]) = 'left' autocreated indexed=no < 'left', 'right'
+
+[tint:halfBlock] > jnt:content, timix:industrial
+ - imagePosition (string, choicelist[resourceBundle]) = 'left' autocreated indexed=no < 'left', 'right'
+ + image (tint:image)
+ + body (tint:text)
+
+
+[tint:card] > jnt:content, timix:content, timix:industrial, timix:linkTo
+// CONTENT ***//
+
+
+//TODO create module css & js managment add css et js element -> external -> url || internal -> file or inline

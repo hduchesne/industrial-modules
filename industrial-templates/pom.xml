@@ -61,11 +61,13 @@
     <packaging>bundle</packaging>
     <description>This is the custom profile module (Industrial Templates) for running on a Digital Experience Manager server.</description>
 
-    <scm>
-        <connection>scm:dummy:uri</connection>
-        <developerConnection>scm:dummy:uri</developerConnection>
-    </scm>
-
+<!--    <scm>-->
+<!--        <connection>scm:dummy:uri</connection>-->
+<!--        <developerConnection>scm:dummy:uri</developerConnection>-->
+<!--    </scm>-->
+    <properties>
+        <jahia-depends>animate,bootstrap4-components,bootstrap4-core,default,font-awesome,jquery,popperjs</jahia-depends>
+    </properties>
     <repositories>
         <repository>
             <id>jahia-public</id>
