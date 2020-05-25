@@ -10,8 +10,9 @@ import javax.jcr.ItemNotFoundException
 logger = LoggerFactory.getLogger(this.class)
 
 getPagesL1={value,curentPageNode ->
-    logger.info("value :"+value.toString())
-    logger.info("curentPageNode :"+curentPageNode.toString())
+    logger.debug("value :"+value.toString())
+    logger.debug("curentPageNode :"+curentPageNode.toString())
+
     switch (value){
         case "currentPage":return JCRTagUtils.getChildrenOfType(curentPageNode, 'jmix:navMenuItem')
         case "parentPage":return JCRTagUtils.getChildrenOfType(curentPageNode.parent, 'jmix:navMenuItem')
