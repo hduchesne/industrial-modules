@@ -47,6 +47,9 @@ showPage={node ->
     return show
 }
 
+def ulHTML = '''    
+        <ul class="${classUL}">
+        '''
 def li_navItemHTML = '''
         <li class="nav-item ${active ? ' active':''}">
             <a class="nav-link" href="${url}">
@@ -54,12 +57,6 @@ def li_navItemHTML = '''
                 ${active ?'<span class="sr-only">(current)</span>':''}
             </a>
         </li>
-        '''
-def a_dropdownItemHTML = '''
-        <a class="dropdown-item ${active ? ' active':''}" href="${url}">
-            ${title}
-            ${active ?'<span class="sr-only">(current)</span>':''}
-        </a>
         '''
 def li_dropdownHTML = '''
         <li class="nav-item  ${active? ' active' :''} dropdown">
@@ -73,14 +70,18 @@ def li_dropdownHTML = '''
                 <a class="dropdown-item" href="${url}">${title}</a>
                 <div class="dropdown-divider"></div>
         '''
-def ulHTML = '''    
-        <ul class="${classUL}">
+def a_dropdownItemHTML = '''
+        <a class="dropdown-item ${active ? ' active':''}" href="${url}">
+            ${title}
+            ${active ?'<span class="sr-only">(current)</span>':''}
+        </a>
         '''
 
+
 def ul = new groovy.text.StreamingTemplateEngine().createTemplate(ulHTML)
+def li_navItem = new groovy.text.StreamingTemplateEngine().createTemplate(li_navItemHTML)
 def li_dropdown = new groovy.text.StreamingTemplateEngine().createTemplate(li_dropdownHTML)
 def a_dropdownItem = new groovy.text.StreamingTemplateEngine().createTemplate(a_dropdownItemHTML)
-def li_navItem = new groovy.text.StreamingTemplateEngine().createTemplate(li_navItemHTML)
 
 createNav = { node,recursive ->
     if(!showPage(node))
@@ -100,6 +101,9 @@ createNav = { node,recursive ->
         ])
 
         childNodes.each {childNode ->
+            if(!showPage(childNode))
+                return
+
             print a_dropdownItem.make([
                     active : renderContext.mainResource.path.contains(childNode.path),
                     url:getUrl(childNode),
