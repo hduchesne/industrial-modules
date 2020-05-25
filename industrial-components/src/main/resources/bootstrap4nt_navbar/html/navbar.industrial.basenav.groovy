@@ -136,12 +136,11 @@ try {
 if(!pagesL1.isEmpty()){
     def recursive=JCRTagUtils.isNodeType(currentNode, 'bootstrap4mix:customBaseNavbar') ?
             currentNode.properties.recursive.string : false
-    
-    def binding = [
-            classUL:JCRTagUtils.isNodeType(currentNode, 'bootstrap4mix:customBaseNavbar') ?
-                    currentNode.properties.ulClass.string : null
-    ]
-    print ul.make(binding)
+
+    print ul.make([
+        classUL:JCRTagUtils.isNodeType(currentNode, 'bootstrap4mix:customBaseNavbar') ?
+                currentNode.properties.ulClass.string : null
+    ])
     pagesL1.each {page -> createNav(page,recursive) }
     print"</ul>"
 }
