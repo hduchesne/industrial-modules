@@ -144,6 +144,7 @@
                         </li>
                     </c:when>
                     <c:otherwise>
+<%--                        TODO Only this part change--%>
                         <li class="${page1Active? ' active' :''}">
                             <a href="${page1Url}">${page1Title} <c:if
                                     test="${page1Active}"><span class="sr-only">(current)</span></c:if></a>

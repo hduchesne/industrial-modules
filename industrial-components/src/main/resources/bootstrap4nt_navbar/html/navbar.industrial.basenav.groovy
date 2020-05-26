@@ -23,7 +23,12 @@ getPagesL1={value,curentPageNode ->
 getTitle={node ->
     switch (true){
         case JCRTagUtils.isNodeType(node,'jnt:nodeLink'):
-            return node.properties['jcr:title'].string?:node.properties['j:node'].node.displayableName
+            try{
+                return node.properties['jcr:title'].string?:node.properties['j:node'].node.displayableName
+            }catch (ItemNotFoundException e) {
+                logger.error("Error processing nodeLink displayableName ", e)
+                return node.displayableName
+            }
         default:return node.displayableName
     }
 }
@@ -32,7 +37,14 @@ getUrl={node ->
         case JCRTagUtils.isNodeType(node,'jnt:navMenuText'):return "#"
         case JCRTagUtils.isNodeType(node,'jnt:externalLink'):return node.properties['j:url'].string
         case JCRTagUtils.isNodeType(node,'jnt:page'):return node.url
-        case JCRTagUtils.isNodeType(node,'jnt:nodeLink'):return node.properties['j:node'].node.url
+        case JCRTagUtils.isNodeType(node,'jnt:nodeLink'):
+            try{
+                currentResource.dependencies.add(node.properties['j:node'].string);
+                return node.properties['j:node'].node.url
+            }catch (ItemNotFoundException e) {
+                logger.error("Error processing nodeLink url ", e)
+                return "#"
+            }
     }
 }
 
@@ -48,7 +60,7 @@ showPage={node ->
 }
 
 def ulHTML = '''    
-        <ul class="${classUL}">
+        <ul class="${classes}">
         '''
 def li_navItemHTML = '''
         <li class="nav-item ${active ? ' active':''}">
@@ -142,9 +154,10 @@ if(!pagesL1.isEmpty()){
             currentNode.properties.recursive.string : false
 
     print ul.make([
-        classUL:JCRTagUtils.isNodeType(currentNode, 'bootstrap4mix:customBaseNavbar') ?
+        classes:JCRTagUtils.isNodeType(currentNode, 'bootstrap4mix:customBaseNavbar') ?
                 currentNode.properties.ulClass.string : null
     ])
     pagesL1.each {page -> createNav(page,recursive) }
     print"</ul>"
 }
+print(RenderService.getInstance().render(new Resource(currentNode, "html", "addResources", currentResource.getContextConfiguration()), renderContext));
