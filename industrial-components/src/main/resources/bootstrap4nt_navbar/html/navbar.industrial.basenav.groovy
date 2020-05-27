@@ -9,6 +9,11 @@ import javax.jcr.ItemNotFoundException
 
 logger = LoggerFactory.getLogger(this.class)
 
+Resource addResources =  new Resource(currentNode, "html", "industrial.addResources", currentResource.getContextConfiguration())
+//addResources.getModuleParams().put()//equivalent of <template:param />
+print(RenderService.getInstance().render(addResources, renderContext));
+
+
 getPagesL1={value,curentPageNode ->
     logger.debug("value :"+value.toString())
     logger.debug("curentPageNode :"+curentPageNode.toString())
@@ -36,11 +41,11 @@ getUrl={node ->
     switch (true){
         case JCRTagUtils.isNodeType(node,'jnt:navMenuText'):return "#"
         case JCRTagUtils.isNodeType(node,'jnt:externalLink'):return node.properties['j:url'].string
-        case JCRTagUtils.isNodeType(node,'jnt:page'):return node.url
+        case JCRTagUtils.isNodeType(node,'jnt:page'):return renderContext.getResponse().encodeURL(node.url)//equivalent of <c:url />
         case JCRTagUtils.isNodeType(node,'jnt:nodeLink'):
             try{
                 currentResource.dependencies.add(node.properties['j:node'].string);
-                return node.properties['j:node'].node.url
+                return renderContext.getResponse().encodeURL(node.properties['j:node'].node.url)
             }catch (ItemNotFoundException e) {
                 logger.error("Error processing nodeLink url ", e)
                 return "#"
@@ -160,4 +165,4 @@ if(!pagesL1.isEmpty()){
     pagesL1.each {page -> createNav(page,recursive) }
     print"</ul>"
 }
-print(RenderService.getInstance().render(new Resource(currentNode, "html", "addResources", currentResource.getContextConfiguration()), renderContext));
+
